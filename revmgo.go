@@ -2,15 +2,10 @@
 package revmgo
 
 import (
-	"fmt"
+	m "github.com/jgraham909/revmgo"
 	"github.com/robfig/revel"
 	"labix.org/v2/mgo"
 )
-
-type Controller struct {
-	*revel.Controller
-	MSession *mgo.Session
-}
 
 var (
 	// Global mgo Session
@@ -36,23 +31,31 @@ func (p MongoPlugin) OnAppStart() {
 }
 
 // Attach a session to our controller.
-func (p MongoPlugin) BeforeRequest(c *Controller) {
+func (p MongoPlugin) BeforeRequest(c interface{}) {
 	// TODO make the option here configurable. New(), Clone(), Copy()
-	c.MSession = MSession.Copy()
+
+	if v, ok := c.(m.MgoController); ok {
+		v.MSession = MSession.Copy()
+	}
+
 }
 
 // Close the controller session if we have an active one.
-func (p MongoPlugin) AfterRequest(c *Controller) {
-	if c.MSession != nil {
-		c.MSession.Close()
+func (p MongoPlugin) AfterRequest(c interface{}) {
+	if v, ok := c.(m.MgoController); ok {
+		if v.MSession != nil {
+			v.MSession.Close()
+		}
+		v.MSession = nil
 	}
-	c.MSession = nil
 }
 
 // Close the controller session if we have an active one.
-func (p MongoPlugin) OnException(c *Controller, err interface{}) {
-	if c.MSession != nil {
-		c.MSession.Close()
+func (p MongoPlugin) OnException(c interface{}, err interface{}) {
+	if v, ok := c.(m.MgoController); ok {
+		if v.MSession != nil {
+			v.MSession.Close()
+		}
+		v.MSession = nil
 	}
-	c.MSession = nil
 }

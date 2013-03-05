@@ -5,7 +5,7 @@ import (
 	"labix.org/v2/mgo"
 )
 
-type RevmgoController struct {
+type MgoController struct {
 	*revel.Controller
 	MSession *mgo.Session
 }
