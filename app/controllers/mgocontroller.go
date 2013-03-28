@@ -2,6 +2,7 @@
 package controllers
 
 import (
+	"github.com/jgraham909/revmgo/app/revmgo"
 	"github.com/robfig/revel"
 	"labix.org/v2/mgo"
 )
@@ -11,23 +12,10 @@ type MgoController struct {
 	MSession *mgo.Session
 }
 
-var MGOSession *mgo.Session // Global mgo Session
-
 // Connect to mgo if we haven't already and return a copy/new/clone of the session
 func (c *MgoController) Begin() revel.Result {
-	var err error
-	if MGOSession == nil {
-		// Read configuration.
-		//
-		// TODO expand to include settings (currently just localhost)
-		// [mongodb://][user:pass@]host1[:port1][,host2[:port2],...][/database][?options]
-		MGOSession, err = mgo.Dial("localhost")
-		if err != nil {
-			revel.ERROR.Panic(err)
-		}
-	}
 	// TODO make the option here configurable. New(), Clone(), Copy()
-	c.MSession = MGOSession.Clone()
+	c.MSession = revmgo.MGOSession.Clone()
 	return nil
 }
 
