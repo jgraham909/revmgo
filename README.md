@@ -21,6 +21,7 @@ your application specific controller.
 Add the following import line in source files that will embed MgoController. Note that
 we alias the import to 'm' since both the controller source file and the MgoController
 have package 'controllers'.
+
     m "github.com/jgraham909/revmgo/app/controllers"
 
 Embed the MgoController on your custom controller;
@@ -35,5 +36,6 @@ Your controller will now have a MSession variable of type *mgo.Session. Use this
 to query your mongo datastore. 
 
 ### See Also
-http://labix.org/v2/mgo for documentation on the mgo driver
-https://github.com/jgraham909/bloggo for a reference implementation (Still a work in progress)
+
+*  http://labix.org/v2/mgo for documentation on the mgo driver
+*  https://github.com/jgraham909/bloggo for a reference implementation (Still a work in progress)
