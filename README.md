@@ -14,9 +14,7 @@ Add the following line to your app.conf.
 ### Embedding the controller
 
 In any controller you want to have mongo connectivity you must include the
-MongoController. If all routes need database then you should likely implement the
-controller embedding as a base controller for your project and then embed that
-your application specific controller.
+MongoController. 
 
 Add the following import line in source files that will embed MongoController. Note that
 we alias the import to 'm' since both the controller source file and the MongoController
@@ -27,7 +25,8 @@ have package 'controllers'.
 Embed the MongoController on your custom controller;
 
     type Application struct {
-  		m.MongoController
+  		*revel.Controller
+        m.MongoController
   		// Other fields
   	}
 
