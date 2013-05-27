@@ -11,22 +11,37 @@ Add the following line to your app.conf.
 
     module.revmgo = github.com/jgraham909/revmgo
 
+Additional settings can be configured via the following directives
+
+#### revmgo.dial
+
+Please review the documentation at [mgo.Session.Dial()](http://godoc.org/labix.org/v2/mgo#Dial) for information on the syntax and valid settings.
+
+#### revmgo.method
+
+This can be one of 'clone', 'copy', 'new'. See [mgo.Session.New()](http://godoc.org/labix.org/v2/mgo#Session.New) for more information.
+
+
+### init.go
+
+Then in your init.go include the following
+
+    revel.OnAppStart(revmgo.Init)
+
 ### Embedding the controller
 
 In any controller you want to have mongo connectivity you must include the
-MongoController. 
+MongoController.
 
-Add the following import line in source files that will embed MongoController. Note that
-we alias the import to 'm' since both the controller source file and the MongoController
-have package 'controllers'.
+Add the following import line in source files that will embed MongoController.
 
-    m "github.com/jgraham909/revmgo/app/controllers"
+     "github.com/jgraham909/revmgo"
 
 Embed the MongoController on your custom controller;
 
     type Application struct {
   		*revel.Controller
-        m.MongoController
+      revmgo.MongoController
   		// Other fields
   	}
 
