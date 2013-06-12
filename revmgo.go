@@ -12,7 +12,7 @@ var (
 	Method  string       // clone, copy, new http://godoc.org/labix.org/v2/mgo#Session.New
 )
 
-func Init() {
+func AppInit() {
 	// Read configuration.
 	var found bool
 	if Dial, found = revel.Config.String("revmgo.dial"); !found {
@@ -32,7 +32,9 @@ func Init() {
 			revel.ERROR.Panic(err)
 		}
 	}
+}
 
+func ControllerInit() {
 	revel.InterceptMethod((*MongoController).Begin, revel.BEFORE)
 	revel.InterceptMethod((*MongoController).End, revel.FINALLY)
 }
