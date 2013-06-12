@@ -28,8 +28,7 @@ func Init() {
 	var err error
 	if Session == nil {
 		// Read configuration.
-		Session, err = mgo.Dial(Dial)
-		if err != nil {
+		if Session, err = mgo.Dial(Dial); err != nil {
 			revel.ERROR.Panic(err)
 		}
 	}
