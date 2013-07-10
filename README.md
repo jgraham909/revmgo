@@ -7,9 +7,9 @@ mgo module for revel framework
 
 ### app.conf
 
-Add the following line to your app.conf.
+Add the following line to your revel application's init.go inside the init() function.
 
-    module.revmgo = github.com/jgraham909/revmgo
+    revel.OnAppStart(func() { revmgo.AppInit() })
 
 Additional settings can be configured via the following directives
 
