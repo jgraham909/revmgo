@@ -7,11 +7,7 @@ mgo module for revel framework
 
 ### app.conf
 
-Add the following line to your revel application's init.go inside the init() function.
-
-    revel.OnAppStart(func() { revmgo.AppInit() })
-
-Additional settings can be configured via the following directives
+Settings can be configured via the following directives in app.conf.
 
 #### revmgo.dial
 
@@ -24,9 +20,9 @@ This can be one of 'clone', 'copy', 'new'. See [mgo.Session.New()](http://godoc.
 
 ### init.go
 
-Then in your init.go include the following
+Add the following inside the init() function in your application's init.go.
 
-    revel.OnAppStart(revmgo.Init)
+    revel.OnAppStart(func() { revmgo.AppInit() })
 
 ### Embedding the controller
 
