@@ -22,7 +22,7 @@ This can be one of 'clone', 'copy', 'new'. See [mgo.Session.New()](http://godoc.
 
 Add the following inside the init() function in your application's init.go.
 
-    revel.OnAppStart(func() { revmgo.AppInit() })
+    revel.OnAppStart(revmgo.AppInit)
 
 ### Embedding the controller
 
