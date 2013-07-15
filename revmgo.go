@@ -2,8 +2,11 @@ package revmgo
 
 import (
 	"errors"
+	"fmt"
 	"github.com/robfig/revel"
 	"labix.org/v2/mgo"
+	"labix.org/v2/mgo/bson"
+	"reflect"
 )
 
 var (
@@ -32,6 +35,10 @@ func AppInit() {
 			revel.ERROR.Panic(err)
 		}
 	}
+
+	// register the custom bson.ObjectId binder
+	objId := bson.NewObjectId()
+	revel.TypeBinders[reflect.TypeOf(objId)] = ObjectIdBinder
 }
 
 func ControllerInit() {
@@ -69,4 +76,34 @@ func MethodError(m string) error {
 		return nil
 	}
 	return errors.New("revmgo: Invalid session instantiation method '%s'")
+}
+
+// Custom TypeBinder for bson.ObjectId
+// Makes additional Id parameters in actions obsolete
+var ObjectIdBinder = revel.Binder{
+	// Make a ObjectId from a request containing it in string format.
+	Bind: revel.ValueBinder(func(val string, typ reflect.Type) reflect.Value {
+		if len(val) == 0 {
+			return reflect.Zero(typ)
+		}
+		if bson.IsObjectIdHex(val) {
+			objId := bson.ObjectIdHex(val)
+			return reflect.ValueOf(objId)
+		} else {
+			revel.ERROR.Print("ObjectIdBinder.Bind - invalid ObjectId!")
+			return reflect.Zero(typ)
+		}
+	}),
+	// Turns ObjectId back to hexString for reverse routing
+	Unbind: func(output map[string]string, name string, val interface{}) {
+		var hexStr string
+		hexStr = fmt.Sprintf("%s", val.(bson.ObjectId).Hex())
+		// not sure if this is too carefull but i wouldn't want invalid ObjectIds in my App
+		if bson.IsObjectIdHex(hexStr) {
+			output[name] = hexStr
+		} else {
+			revel.ERROR.Print("ObjectIdBinder.Unbind - invalid ObjectId!")
+			output[name] = ""
+		}
+	},
 }
