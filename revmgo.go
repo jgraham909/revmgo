@@ -37,7 +37,8 @@ func AppInit() {
 	}
 
 	// register the custom bson.ObjectId binder
-	revel.TypeBinders[reflect.TypeOf(bson.ObjectId{})] = ObjectIdBinder
+	objId := bson.NewObjectId()
+	revel.TypeBinders[reflect.TypeOf(objId)] = ObjectIdBinder
 }
 
 func ControllerInit() {
