@@ -18,11 +18,24 @@ Please review the documentation at [mgo.Session.Dial()](http://godoc.org/labix.o
 This can be one of 'clone', 'copy', 'new'. See [mgo.Session.New()](http://godoc.org/labix.org/v2/mgo#Session.New) for more information.
 
 
-### init.go
+### app.init()
 
-Add the following inside the init() function in your application's init.go.
+Add the following inside the app.init() function in `app/init.go`.
 
     revel.OnAppStart(revmgo.AppInit)
+    
+### controllers.init()
+
+Similarly for your controllers init() function you must add the `revmgo.ControllerInit()` method. A minimum `app/controllers/init.go` file is represented below.
+
+    package controllers
+
+    import "github.com/jgraham909/revmgo"
+
+    func init() {
+        revmgo.ControllerInit()
+    }
+
 
 ### Embedding the controller
 
