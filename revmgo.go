@@ -27,13 +27,10 @@ func AppInit() {
 	} else if err := MethodError(Method); err != nil {
 		revel.ERROR.Panic(err)
 	}
-
-	var err error
+	// Let's try to connect to Mongo DB right upon start but don't raise an
+	// error. Error will be handled if there is actually a request
 	if Session == nil {
-		// Read configuration.
-		if Session, err = mgo.Dial(Dial); err != nil {
-			revel.ERROR.Panic(err)
-		}
+		Session, _ = mgo.Dial(Dial)
 	}
 
 	// register the custom bson.ObjectId binder
@@ -53,6 +50,16 @@ type MongoController struct {
 
 // Connect to mgo if we haven't already and return a copy/new/clone of the session
 func (c *MongoController) Begin() revel.Result {
+	// We may not be connected yet if revel was started before Mongo DB or
+	// Mongo DB was restarted
+	if Session == nil {
+		var err error
+		if Session, err = mgo.Dial(Dial); err != nil {
+			// Extend the error description to include that this is a Mongo Error
+			err = fmt.Errorf("Could not connect to Mongo DB. Error: %s", err)
+			return c.RenderError(err)
+		}
+	}
 	switch Method {
 	case "clone":
 		c.MongoSession = Session.Clone()
@@ -66,7 +73,11 @@ func (c *MongoController) Begin() revel.Result {
 
 // Close the controller session if we have an active one.
 func (c *MongoController) End() revel.Result {
-	c.MongoSession.Close()
+	// This is necessary since End() fill be called no matter what (revel.FINALLY)
+	// so it may not be connected.
+	if c.MongoSession != nil {
+		c.MongoSession.Close()
+	}
 	return nil
 }
 
