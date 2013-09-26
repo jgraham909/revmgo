@@ -1,7 +1,6 @@
 package revmgo
 
 import (
-	"errors"
 	"fmt"
 	"github.com/robfig/revel"
 	"labix.org/v2/mgo"
@@ -16,23 +15,20 @@ var (
 )
 
 func AppInit() {
+	var err error
 	// Read configuration.
-	var found bool
-	if Dial, found = revel.Config.String("revmgo.dial"); !found {
-		// Default to 'localhost'
-		Dial = "localhost"
-	}
-	if Method, found = revel.Config.String("db.spec"); !found {
-		Method = "clone"
-	} else if err := MethodError(Method); err != nil {
+	Dial = revel.Config.StringDefault("revmgo.dial", "localhost")
+	Method = revel.Config.StringDefault("db.spec", "clone")
+	if err = MethodError(Method); err != nil {
 		revel.ERROR.Panic(err)
 	}
-
-	var err error
+	// Let's try to connect to Mongo DB right upon starting revel but don't
+	// raise an error. Errors will be handled if there is actually a request
 	if Session == nil {
-		// Read configuration.
-		if Session, err = mgo.Dial(Dial); err != nil {
-			revel.ERROR.Panic(err)
+		Session, err = mgo.Dial(Dial)
+		if err != nil {
+			// Only warn since we'll retry later for each request
+			revel.WARN.Printf("Could not connect to Mongo DB. Error: %s", err)
 		}
 	}
 
@@ -53,6 +49,17 @@ type MongoController struct {
 
 // Connect to mgo if we haven't already and return a copy/new/clone of the session
 func (c *MongoController) Begin() revel.Result {
+	// We may not be connected yet if revel was started before Mongo DB or
+	// Mongo DB was restarted
+	if Session == nil {
+		var err error
+		Session, err = mgo.Dial(Dial)
+		if err != nil {
+			// Extend the error description to include that this is a Mongo Error
+			err = fmt.Errorf("Could not connect to Mongo DB. Error: %s", err)
+			return c.RenderError(err)
+		}
+	}
 	switch Method {
 	case "clone":
 		c.MongoSession = Session.Clone()
@@ -66,7 +73,12 @@ func (c *MongoController) Begin() revel.Result {
 
 // Close the controller session if we have an active one.
 func (c *MongoController) End() revel.Result {
-	c.MongoSession.Close()
+	// This is necessary since End() will be called no matter what
+	// (revel.FINALLY) so it may not be connected in which case MongoSession
+	// were a nil pointer and panic
+	if c.MongoSession != nil {
+		c.MongoSession.Close()
+	}
 	return nil
 }
 
@@ -75,7 +87,7 @@ func MethodError(m string) error {
 	case "clone", "copy", "new":
 		return nil
 	}
-	return errors.New("revmgo: Invalid session instantiation method '%s'")
+	return fmt.Errorf("revmgo: Invalid session instantiation method '%s'", m)
 }
 
 // Custom TypeBinder for bson.ObjectId
