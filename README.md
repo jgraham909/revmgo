@@ -62,3 +62,5 @@ to query your mongo datastore.
 
 *  http://labix.org/v2/mgo for documentation on the mgo driver
 *  https://github.com/jgraham909/bloggo for a reference implementation (Still a work in progress)
+
+[![Build Status](https://travis-ci.org/jgraham909/revmgo.png)](https://travis-ci.org/jgraham909/revmgo)
