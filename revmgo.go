@@ -12,7 +12,26 @@ var (
 	Session *mgo.Session // Global mgo Session
 	Dial    string       // http://godoc.org/labix.org/v2/mgo#Dial
 	Method  string       // clone, copy, new http://godoc.org/labix.org/v2/mgo#Session.New
+	// Holds a the function to call for a given Method
+	mgoSessionDupl func() *mgo.Session
 )
+
+// Optimization: Stores the method to call in mgoSessionDupl so that it only
+// has to be looked up once (or whenever Session changes)
+func setDuplMethod() {
+	// Save which function to call for each request:
+	switch Method {
+	case "clone":
+		mgoSessionDupl = Session.Clone
+	case "copy":
+		mgoSessionDupl = Session.Copy
+	case "new":
+		mgoSessionDupl = Session.New
+	default:
+		mgoSessionDupl = Session.Clone
+	}
+
+}
 
 func AppInit() {
 	var err error
@@ -22,6 +41,7 @@ func AppInit() {
 	if err = MethodError(Method); err != nil {
 		revel.ERROR.Panic(err)
 	}
+
 	// Let's try to connect to Mongo DB right upon starting revel but don't
 	// raise an error. Errors will be handled if there is actually a request
 	if Session == nil {
@@ -29,6 +49,8 @@ func AppInit() {
 		if err != nil {
 			// Only warn since we'll retry later for each request
 			revel.WARN.Printf("Could not connect to Mongo DB. Error: %s", err)
+		} else {
+			setDuplMethod()
 		}
 	}
 
@@ -58,16 +80,12 @@ func (c *MongoController) Begin() revel.Result {
 			// Extend the error description to include that this is a Mongo Error
 			err = fmt.Errorf("Could not connect to Mongo DB. Error: %s", err)
 			return c.RenderError(err)
+		} else {
+			setDuplMethod()
 		}
 	}
-	switch Method {
-	case "clone":
-		c.MongoSession = Session.Clone()
-	case "copy":
-		c.MongoSession = Session.Copy()
-	case "new":
-		c.MongoSession = Session.New()
-	}
+	// Calls Clone(), Copy() or New() depending on the configuration
+	c.MongoSession = mgoSessionDupl()
 	return nil
 }
 
