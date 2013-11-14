@@ -37,7 +37,7 @@ func AppInit() {
 	var err error
 	// Read configuration.
 	Dial = revel.Config.StringDefault("revmgo.dial", "localhost")
-	Method = revel.Config.StringDefault("db.spec", "clone")
+	Method = revel.Config.StringDefault("revmgo.method", "clone")
 	if err = MethodError(Method); err != nil {
 		revel.ERROR.Panic(err)
 	}
