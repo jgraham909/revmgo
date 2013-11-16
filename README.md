@@ -17,6 +17,10 @@ Please review the documentation at [mgo.Session.Dial()](http://godoc.org/labix.o
 
 This can be one of 'clone', 'copy', 'new'. See [mgo.Session.New()](http://godoc.org/labix.org/v2/mgo#Session.New) for more information.
 
+#### revmgo.mode
+
+This can be one of 'strong', 'monotonic', 'eventual'. See [mgo.Session.SetMode()](http://godoc.org/labix.org/v2/mgo#Session.SetMode) for more information.
+
 
 ### app.init()
 
