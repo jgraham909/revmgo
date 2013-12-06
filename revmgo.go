@@ -12,7 +12,8 @@ var (
 	Session *mgo.Session // Global mgo Session
 	Dial    string       // http://godoc.org/labix.org/v2/mgo#Dial
 	Method  string       // clone, copy, new http://godoc.org/labix.org/v2/mgo#Session.New
-	// Holds a the function to call for a given Method
+	Mode    string       // strong, monotonic, eventual http://godoc.org/labix.org/v2/mgo#Session.SetMode
+	// Holds the function to call for a given Method
 	mgoSessionDupl func() *mgo.Session
 )
 
@@ -30,7 +31,19 @@ func setDuplMethod() {
 	default:
 		mgoSessionDupl = Session.Clone
 	}
+}
 
+func setMode() {
+	switch Mode {
+	case "strong":
+		Session.SetMode(mgo.Strong, true)
+	case "monotonic":
+		Session.SetMode(mgo.Monotonic, true)
+	case "eventual":
+		Session.SetMode(mgo.Eventual, true)
+	default:
+		Session.SetMode(mgo.Monotonic, true)
+	}
 }
 
 func AppInit() {
@@ -38,7 +51,12 @@ func AppInit() {
 	// Read configuration.
 	Dial = revel.Config.StringDefault("revmgo.dial", "localhost")
 	Method = revel.Config.StringDefault("revmgo.method", "clone")
+	Mode = revel.Config.StringDefault("revmgo.mode", "monotonic")
 	if err = MethodError(Method); err != nil {
+		revel.ERROR.Panic(err)
+	}
+
+	if err = ModeError(Mode); err != nil {
 		revel.ERROR.Panic(err)
 	}
 
@@ -51,6 +69,8 @@ func AppInit() {
 			revel.WARN.Printf("Could not connect to Mongo DB. Error: %s", err)
 		} else {
 			setDuplMethod()
+			setMode()
+			Session.SetSafe(&mgo.Safe{})
 		}
 	}
 
@@ -82,6 +102,8 @@ func (c *MongoController) Begin() revel.Result {
 			return c.RenderError(err)
 		} else {
 			setDuplMethod()
+			setMode()
+			Session.SetSafe(&mgo.Safe{})
 		}
 	}
 	// Calls Clone(), Copy() or New() depending on the configuration
@@ -106,6 +128,14 @@ func MethodError(m string) error {
 		return nil
 	}
 	return fmt.Errorf("revmgo: Invalid session instantiation method '%s'", m)
+}
+
+func ModeError(m string) error {
+	switch m {
+	case "strong", "monotonic", "eventual":
+		return nil
+	}
+	return fmt.Errorf("revmgo: Invalid session mode '%s'", m)
 }
 
 // Custom TypeBinder for bson.ObjectId
