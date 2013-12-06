@@ -12,7 +12,7 @@ var (
 	Session *mgo.Session // Global mgo Session
 	Dial    string       // http://godoc.org/labix.org/v2/mgo#Dial
 	Method  string       // clone, copy, new http://godoc.org/labix.org/v2/mgo#Session.New
-	Mode  	string       // strong, monotonic, eventual http://godoc.org/labix.org/v2/mgo#Session.SetMode
+	Mode    string       // strong, monotonic, eventual http://godoc.org/labix.org/v2/mgo#Session.SetMode
 	// Holds the function to call for a given Method
 	mgoSessionDupl func() *mgo.Session
 )
@@ -70,6 +70,7 @@ func AppInit() {
 		} else {
 			setDuplMethod()
 			setMode()
+			Session.SetSafe(&mgo.Safe{})
 		}
 	}
 
@@ -102,6 +103,7 @@ func (c *MongoController) Begin() revel.Result {
 		} else {
 			setDuplMethod()
 			setMode()
+			Session.SetSafe(&mgo.Safe{})
 		}
 	}
 	// Calls Clone(), Copy() or New() depending on the configuration
