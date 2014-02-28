@@ -3,7 +3,7 @@ package tests
 import (
 	"github.com/jgraham909/revmgo"
 	"github.com/jgraham909/revmgo/testapp/app/models"
-	"github.com/robfig/revel"
+	"github.com/revel/revel"
 )
 
 type AppTest struct {
