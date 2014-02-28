@@ -1,6 +1,6 @@
 language: go
 go: 1.2
-services: 
+services:
   - mongodb
 install:
   - export PATH=$PATH:$HOME/gopath/bin
@@ -15,4 +15,4 @@ script:
   - go test github.com/revel/revel/harness
 
   # Build & run the sample apps
-  - revel test github.com/jgraham909/revmgo/testapp
+  - revel test github.com/lenw/revmgo/testapp
