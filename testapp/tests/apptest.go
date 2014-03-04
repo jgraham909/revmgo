@@ -3,7 +3,7 @@ package tests
 import (
 	"github.com/jgraham909/revmgo"
 	"github.com/jgraham909/revmgo/testapp/app/models"
-	"github.com/robfig/revel"
+	"github.com/revel/revel"
 )
 
 type AppTest struct {
@@ -18,7 +18,7 @@ func (t *AppTest) Before() {
 func (t AppTest) TestThatIndexPageWorks() {
 	t.Get("/")
 	t.AssertOk()
-	t.AssertContentType("text/html")
+	t.AssertContentType("text/html; charset=utf-8")
 
 }
 

@@ -1,17 +1,18 @@
 language: go
-go: 1.1
-services: 
+go: 1.2
+services:
   - mongodb
 install:
   - export PATH=$PATH:$HOME/gopath/bin
-  - go get -v github.com/robfig/revel/revel
-  - go get -v github.com/robfig/revel/harness
+  - go get -v github.com/revel/revel
+  - go get -v github.com/revel/cmd/revel
+  - go get -v github.com/revel/revel/harness
   - go get -v labix.org/v2/mgo
   - go get -v labix.org/v2/mgo/bson
 
 script:
-  - go test github.com/robfig/revel
-  - go test github.com/robfig/revel/harness
+  - go test github.com/revel/revel
+  - go test github.com/revel/revel/harness
 
   # Build & run the sample apps
   - revel test github.com/jgraham909/revmgo/testapp
