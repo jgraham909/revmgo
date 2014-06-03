@@ -20,4 +20,26 @@ func init() {
 		revel.InterceptorFilter,       // Run interceptors around the action.
 		revel.ActionInvoker,           // Invoke the action.
 	}
+
+	revel.OnAppStart(func() {
+
+		var keyValues []map[string]string
+
+		db := revmgo.Session.DB("test")
+		col := db.C("config")
+		query := col.Find(nil)
+
+		err := query.All(&keyValues)
+
+		if err != nil {
+			revel.ERROR.Printf("%v", err)
+		} else if keyValues != nil {
+			for key, value := range keyValues {
+				revel.INFO.Printf("%s: %s", key, value)
+			}
+		} else {
+			revel.INFO.Printf("No keys found")
+		}
+
+	})
 }
