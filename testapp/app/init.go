@@ -23,7 +23,7 @@ func init() {
 
 	revel.OnAppStart(func() {
 
-		var keyValues []map[string]string
+		keyValues := []map[string]string{}
 
 		db := revmgo.Session.DB("test")
 		col := db.C("config")
