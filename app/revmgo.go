@@ -10,14 +10,14 @@ import (
 
 var (
 	// Global config
-	Config    *MongoConfig
+	Config *MongoConfig
 	// Global mgo Session
-	Session   *mgo.Session 
+	Session *mgo.Session
 	// Global mgo Database
-	Database  *mgo.Database
-	// Optimization: Stores the method to call in mgoSessionDupl so that it only 
+	Database *mgo.Database
+	// Optimization: Stores the method to call in mgoSessionDupl so that it only
 	// has to be looked up once (or whenever Session changes)
-	Duplicate func() *mgo.Session 
+	Duplicate func() *mgo.Session
 )
 
 type MongoConfig struct {
@@ -35,8 +35,9 @@ func Init() {
 	Config = &MongoConfig{h, m, d}
 
 	// Let's try to connect to Mongo DB right upon starting revel but don't
--	// raise an error. Errors will be handled if there is actually a request
-	if err := Dial(); err != nil {
+	// raise an error. Errors will be handled if there is actually a request
+	err := Dial()
+	if err != nil {
 		revel.WARN.Printf("Could not connect to Mongo DB. Error: %s", err)
 	}
 
@@ -70,7 +71,7 @@ func Init() {
 	}
 }
 
-// Main Dial func 
+// Main Dial func
 func Dial() error {
 
 	var (
@@ -100,7 +101,7 @@ func Dial() error {
 		Config.Method = "clone"
 		m = Session.Clone
 	}
-	
+
 	Duplicate = m
 
 	Database = Session.DB(Config.Db)
