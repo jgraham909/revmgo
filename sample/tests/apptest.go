@@ -1,8 +1,8 @@
 package tests
 
 import (
-	"github.com/jgraham909/revmgo"
-	"github.com/jgraham909/revmgo/testapp/app/models"
+	"github.com/creativelikeadog/revmgo/app"
+	"github.com/creativelikeadog/revmgo/sample/app/models"
 	"github.com/revel/revel"
 )
 
@@ -12,7 +12,7 @@ type AppTest struct {
 
 func (t *AppTest) Before() {
 	// Make sure our collection is clean
-	models.Collection(revmgo.Session).DropCollection()
+	models.Collection(revmgo.Database).DropCollection()
 }
 
 func (t AppTest) TestThatIndexPageWorks() {
@@ -25,8 +25,8 @@ func (t AppTest) TestThatIndexPageWorks() {
 func (t AppTest) TestSave() {
 	b := models.GetBook("MobyDick")
 	t.AssertEqual("Moby Dick", b.Title)
-	b.Save(revmgo.Session)
-	d := models.GetBookByObjectId(revmgo.Session, b.Id)
+	b.Save(revmgo.Database)
+	d := models.FindByObjectId(revmgo.Database, b.Id)
 	t.AssertEqual(b.Title, d.Title)
 	t.AssertEqual(b.Id, d.Id)
 	t.AssertEqual(b.Body, d.Body)
@@ -35,5 +35,5 @@ func (t AppTest) TestSave() {
 
 func (t *AppTest) After() {
 	// Cleanup any mess we made
-	models.Collection(revmgo.Session).DropCollection()
+	models.Collection(revmgo.Database).DropCollection()
 }
