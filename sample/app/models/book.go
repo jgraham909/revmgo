@@ -1,7 +1,6 @@
 package models
 
 import (
-	"github.com/creativelikeadog/revmgo"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
@@ -19,16 +18,19 @@ func Collection(d *mgo.Database) *mgo.Collection {
 	return d.C(COLLECTION)
 }
 
-func (b *Book) FindById(d *mgo.Database, id string) *Book {
-
+func FindByObjectId(d *mgo.Database, Id bson.ObjectId) *Book {
 	b := new(Book)
+	Collection(d).FindId(Id).One(b)
+	return b
+}
 
+func FindById(d *mgo.Database, id string) *Book {
 	if bson.IsObjectIdHex(id) {
 		Id := bson.ObjectIdHex(id)
-		Collection(d).FindId(Id).One(b)
+		return FindByObjectId(d, Id)
 	}
 
-	return b
+	return new(Book)
 }
 
 func FindByTitle(d *mgo.Database, Title string) *Book {

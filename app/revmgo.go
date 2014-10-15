@@ -1,4 +1,4 @@
-package mgo
+package revmgo
 
 import (
 	"fmt"
@@ -99,6 +99,7 @@ func Dial() error {
 type MongoController struct {
 	*revel.Controller
 	MongoSession *mgo.Session
+	Database     *mgo.Database
 }
 
 func (m *MongoController) Begin() revel.Result {
