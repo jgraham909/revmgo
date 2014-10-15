@@ -22,9 +22,9 @@ type MongoConfig struct {
 }
 
 func Init() {
-	h := revel.Config.StringDefault("mgo.host", "localhost")
-	m := revel.Config.StringDefault("mgo.method", "clone")
-	d := revel.Config.StringDefault("mgo.database", "test")
+	h := revel.Config.StringDefault("revmgo.host", "localhost")
+	m := revel.Config.StringDefault("revmgo.method", "clone")
+	d := revel.Config.StringDefault("revmgo.database", "test")
 
 	Config = &MongoConfig{h, m, d}
 
