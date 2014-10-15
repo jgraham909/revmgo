@@ -9,10 +9,15 @@ import (
 )
 
 var (
+	// Global config
 	Config    *MongoConfig
-	Session   *mgo.Session
+	// Global mgo Session
+	Session   *mgo.Session 
+	// Global mgo Database
 	Database  *mgo.Database
-	Duplicate func() *mgo.Session
+	// Optimization: Stores the method to call in mgoSessionDupl so that it only 
+	// has to be looked up once (or whenever Session changes)
+	Duplicate func() *mgo.Session 
 )
 
 type MongoConfig struct {
@@ -22,17 +27,22 @@ type MongoConfig struct {
 }
 
 func Init() {
+	// Read configuration.
 	h := revel.Config.StringDefault("revmgo.host", "localhost")
 	m := revel.Config.StringDefault("revmgo.method", "clone")
 	d := revel.Config.StringDefault("revmgo.database", "test")
 
 	Config = &MongoConfig{h, m, d}
 
+	// Let's try to connect to Mongo DB right upon starting revel but don't
+-	// raise an error. Errors will be handled if there is actually a request
 	if err := Dial(); err != nil {
-		revel.ERROR.Fatal(err)
+		revel.WARN.Printf("Could not connect to Mongo DB. Error: %s", err)
 	}
 
+	// register the custom bson.ObjectId binder
 	revel.TypeBinders[reflect.TypeOf(bson.NewObjectId())] = revel.Binder{
+		// Make a ObjectId from a request containing it in string format.
 		Bind: revel.ValueBinder(func(val string, typ reflect.Type) reflect.Value {
 			if len(val) == 0 {
 				return reflect.Zero(typ)
@@ -45,6 +55,7 @@ func Init() {
 				return reflect.Zero(typ)
 			}
 		}),
+		// Turns ObjectId back to hexString for reverse routing
 		Unbind: func(output map[string]string, name string, val interface{}) {
 
 			hexStr := fmt.Sprintf("%s", val.(bson.ObjectId).Hex())
@@ -59,6 +70,7 @@ func Init() {
 	}
 }
 
+// Main Dial func 
 func Dial() error {
 
 	var (
@@ -88,7 +100,7 @@ func Dial() error {
 		Config.Method = "clone"
 		m = Session.Clone
 	}
-
+	
 	Duplicate = m
 
 	Database = Session.DB(Config.Db)
@@ -102,14 +114,19 @@ type MongoController struct {
 	Database     *mgo.Database
 }
 
+// Connect to mgo if we haven't already and return a copy/new/clone of the session
 func (m *MongoController) Begin() revel.Result {
-
+	// We may not be connected yet if revel was started before Mongo DB or
+	// Mongo DB was restarted
 	if Session == nil {
 		if err := Dial(); err != nil {
+			// Extend the error description to include that this is a Mongo Error
+			err = fmt.Errorf("Could not connect to Mongo DB. Error: %s", err)
 			return m.RenderError(err)
 		}
 	}
 
+	// Calls Clone(), Copy() or New() depending on the configuration
 	m.MongoSession = Duplicate()
 	m.Database = m.MongoSession.DB(Config.Db)
 
@@ -117,8 +134,11 @@ func (m *MongoController) Begin() revel.Result {
 
 }
 
+// Close the controller session if we have an active one.
 func (m *MongoController) End() revel.Result {
-
+	// This is necessary since End() will be called no matter what
+	// (revel.FINALLY) so it may not be connected in which case MongoSession
+	// were a nil pointer and panic
 	if m.MongoSession != nil {
 		m.MongoSession.Close()
 		m.Database = nil
