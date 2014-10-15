@@ -1,12 +1,8 @@
 package app
 
-import (
-	"github.com/jgraham909/revmgo"
-	"github.com/revel/revel"
-)
+import "github.com/revel/revel"
 
 func init() {
-	revel.OnAppStart(revmgo.AppInit)
 	// Filters is the default set of global filters.
 	revel.Filters = []revel.Filter{
 		revel.PanicFilter,             // Recover from panics and display an error page instead.
@@ -17,29 +13,26 @@ func init() {
 		revel.FlashFilter,             // Restore and write the flash cookie.
 		revel.ValidationFilter,        // Restore kept validation errors and save new ones from cookie.
 		revel.I18nFilter,              // Resolve the requested language
+		HeaderFilter,                  // Add some security based headers
 		revel.InterceptorFilter,       // Run interceptors around the action.
+		revel.CompressFilter,          // Compress the result.
 		revel.ActionInvoker,           // Invoke the action.
 	}
 
-	revel.OnAppStart(func() {
+	// register startup functions with OnAppStart
+	// ( order dependent )
+	// revel.OnAppStart(InitDB)
+	// revel.OnAppStart(FillCache)
+}
 
-		keyValues := []map[string]string{}
+// TODO turn this into revel.HeaderFilter
+// should probably also have a filter for CSRF
+// not sure if it can go in the same filter or not
+var HeaderFilter = func(c *revel.Controller, fc []revel.Filter) {
+	// Add some common security headers
+	c.Response.Out.Header().Add("X-Frame-Options", "SAMEORIGIN")
+	c.Response.Out.Header().Add("X-XSS-Protection", "1; mode=block")
+	c.Response.Out.Header().Add("X-Content-Type-Options", "nosniff")
 
-		db := revmgo.Session.DB("test")
-		col := db.C("config")
-		query := col.Find(nil)
-
-		err := query.All(&keyValues)
-
-		if err != nil {
-			revel.ERROR.Printf("%v", err)
-		} else if keyValues != nil {
-			for key, value := range keyValues {
-				revel.INFO.Printf("%s: %s", key, value)
-			}
-		} else {
-			revel.INFO.Printf("No keys found")
-		}
-
-	})
+	fc[0](c, fc[1:]) // Execute the next filter stage.
 }

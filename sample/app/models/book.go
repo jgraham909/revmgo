@@ -1,9 +1,12 @@
 package models
 
 import (
-	"labix.org/v2/mgo"
-	"labix.org/v2/mgo/bson"
+	"github.com/creativelikeadog/revmgo"
+	"gopkg.in/mgo.v2"
+	"gopkg.in/mgo.v2/bson"
 )
+
+const COLLECTION = "books"
 
 type Book struct {
 	Id    bson.ObjectId `bson:"_id,omitempty"`
@@ -12,40 +15,35 @@ type Book struct {
 	Tags  []string      `bson:"Tags"`
 }
 
-func Collection(s *mgo.Session) *mgo.Collection {
-	return s.DB("test").C("books")
+func Collection(d *mgo.Database) *mgo.Collection {
+	return d.C(COLLECTION)
 }
 
-func GetBookByObjectId(s *mgo.Session, Id bson.ObjectId) *Book {
+func (b *Book) FindById(d *mgo.Database, id string) *Book {
+
 	b := new(Book)
-	Collection(s).FindId(Id).One(b)
-	return b
-}
 
-func GetBookById(s *mgo.Session, Id string) *Book {
-	if bson.IsObjectIdHex(Id) {
-		ObjectId := bson.ObjectIdHex(Id)
-		return GetBookByObjectId(s, ObjectId)
-	} else {
-		return new(Book)
+	if bson.IsObjectIdHex(id) {
+		Id := bson.ObjectIdHex(id)
+		Collection(d).FindId(Id).One(b)
 	}
-}
-
-func GetBookByTitle(s *mgo.Session, Title string) *Book {
-	b := new(Book)
-	query := Collection(s).Find(bson.M{"Title": Title})
-	query.One(b)
 
 	return b
 }
 
-func (b *Book) Save(s *mgo.Session) error {
-	_, err := Collection(s).Upsert(bson.M{"_id": b.Id}, b)
+func FindByTitle(d *mgo.Database, Title string) *Book {
+	b := new(Book)
+	Collection(d).Find(bson.M{"Title": Title}).One(b)
+	return b
+}
+
+func (b *Book) Save(d *mgo.Database) error {
+	_, err := Collection(d).Upsert(bson.M{"_id": b.Id}, b)
 	return err
 }
 
-func (b *Book) Delete(s *mgo.Session) error {
-	return Collection(s).RemoveId(b.Id)
+func (b *Book) Delete(d *mgo.Database) error {
+	return Collection(d).RemoveId(b.Id)
 }
 
 func (b *Book) String() string {

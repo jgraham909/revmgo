@@ -1,8 +1,8 @@
 package controllers
 
 import (
-	"github.com/jgraham909/revmgo"
-	"github.com/jgraham909/revmgo/testapp/app/models"
+	"github.com/creativelikeadog/revmgo"
+	"github.com/creativelikeadog/revmgo/sample/app/book"
 	"github.com/revel/revel"
 )
 
@@ -16,7 +16,8 @@ func (c Book) Index() revel.Result {
 }
 
 func (c Book) View(id string) revel.Result {
-	b := models.GetBookById(c.MongoSession, id)
+	b := book.FindById(id)
+
 	if b.Id.Hex() != id {
 		return c.NotFound("Could not find a book with '%s' as id.", id)
 	}
