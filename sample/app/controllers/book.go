@@ -1,14 +1,14 @@
 package controllers
 
 import (
-	"github.com/creativelikeadog/revmgo/app"
-	"github.com/creativelikeadog/revmgo/sample/app/models"
+	"github.com/creativelikeadog/revel-mgo/app"
+	"github.com/creativelikeadog/revel-mgo/sample/app/models"
 	"github.com/revel/revel"
 )
 
 type Book struct {
 	*revel.Controller
-	revmgo.MongoController
+	mgo.MongoController
 }
 
 func (c Book) Index() revel.Result {
