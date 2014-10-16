@@ -9,7 +9,13 @@ mgo module for revel framework
 
 Settings can be configured via the following directives in app.conf.
 
-#### revmgo.dial
+#### modules.revmgo
+  
+module.revmgo=github.com/creativelikeadog/revmgo
+
+Please review the documentation at [Revel - Modules - Overview](http://revel.github.io/manual/modules.html) for more information
+
+#### revmgo.host
 
 Please review the documentation at [mgo.Session.Dial()](http://godoc.org/labix.org/v2/mgo#Dial) for information on the syntax and valid settings.
 
@@ -18,24 +24,9 @@ Please review the documentation at [mgo.Session.Dial()](http://godoc.org/labix.o
 This can be one of 'clone', 'copy', 'new'. See [mgo.Session.New()](http://godoc.org/labix.org/v2/mgo#Session.New) for more information.
 
 
-### app.init()
+#### revmgo.database
 
-Add the following inside the app.init() function in `app/init.go`.
-
-    revel.OnAppStart(revmgo.AppInit)
-    
-### controllers.init()
-
-Similarly for your controllers init() function you must add the `revmgo.ControllerInit()` method. A minimum `app/controllers/init.go` file is represented below.
-
-    package controllers
-
-    import "github.com/jgraham909/revmgo"
-
-    func init() {
-        revmgo.ControllerInit()
-    }
-
+The name of the default database you want to use
 
 ### Embedding the controller
 
@@ -44,7 +35,7 @@ MongoController.
 
 Add the following import line in source files that will embed MongoController.
 
-     "github.com/jgraham909/revmgo"
+     "github.com/creativelikeadog/revmgo/app"
 
 Embed the MongoController on your custom controller;
 
@@ -55,8 +46,12 @@ Embed the MongoController on your custom controller;
   	}
 
 
-Your controller will now have a MongoSession variable of type *mgo.Session. Use this
+Your controller will now have a MongoSession variable of type *mgo.Session and a Database variable of type *mgo.Database. Use this
 to query your mongo datastore.
+
+### Running sample
+
+revel run github.com/creativelikeadog/revmgo/sample
 
 ### See Also
 
