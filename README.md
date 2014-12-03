@@ -78,7 +78,7 @@ Use revmgo in revel.jobs
 ```
 ### See Also
 
-*  http://labix.org/v2/mgo for documentation on the mgo driver
+*  http://gopkg.in/mgo.v2 for documentation on the mgo driver
 *  https://github.com/jgraham909/bloggo for a reference implementation (Still a work in progress)
 
 
