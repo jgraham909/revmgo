@@ -11,11 +11,11 @@ Settings can be configured via the following directives in app.conf.
 
 #### revmgo.dial
 
-Please review the documentation at [mgo.Session.Dial()](http://godoc.org/labix.org/v2/mgo#Dial) for information on the syntax and valid settings.
+Please review the documentation at [mgo.Session.Dial()](http://godoc.org/gopkg.in/mgo.v2#Dial) for information on the syntax and valid settings.
 
 #### revmgo.method
 
-This can be one of 'clone', 'copy', 'new'. See [mgo.Session.New()](http://godoc.org/labix.org/v2/mgo#Session.New) for more information.
+This can be one of 'clone', 'copy', 'new'. See [mgo.Session.New()](http://godoc.org/gopkg.in/mgo.v2#Session.New) for more information.
 
 
 ### app.init()
@@ -23,7 +23,7 @@ This can be one of 'clone', 'copy', 'new'. See [mgo.Session.New()](http://godoc.
 Add the following inside the app.init() function in `app/init.go`.
 
     revel.OnAppStart(revmgo.AppInit)
-    
+
 ### controllers.init()
 
 Similarly for your controllers init() function you must add the `revmgo.ControllerInit()` method. A minimum `app/controllers/init.go` file is represented below.
@@ -60,7 +60,7 @@ to query your mongo datastore.
 
 ### See Also
 
-*  http://labix.org/v2/mgo for documentation on the mgo driver
+*  http://gopkg.in/mgo.v2 for documentation on the mgo driver
 *  https://github.com/jgraham909/bloggo for a reference implementation (Still a work in progress)
 
 [![Build Status](https://travis-ci.org/jgraham909/revmgo.png)](https://travis-ci.org/jgraham909/revmgo)
