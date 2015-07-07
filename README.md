@@ -1,66 +1,63 @@
 revmgo
 ======
-
 mgo module for revel framework
 
-## Module Use
+### Installation
+``` bash
+    go get github.com/janekolszak/revmgo
+```
+### Test
+``` bash
+    go get github.com/janekolszak/revmgo/testapp
+```
+### Configuration
+In app.conf:
+- **revmgo.dial** = [mgo.Session.Dial()](http://godoc.org/labix.org/v2/mgo#Dial)
+- **revmgo.method** = One of 'clone', 'copy', 'new'. See [mgo.Session.New()](http://godoc.org/labix.org/v2/mgo#Session.New)
 
-### app.conf
-
-Settings can be configured via the following directives in app.conf.
-
-#### revmgo.dial
-
-Please review the documentation at [mgo.Session.Dial()](http://godoc.org/labix.org/v2/mgo#Dial) for information on the syntax and valid settings.
-
-#### revmgo.method
-
-This can be one of 'clone', 'copy', 'new'. See [mgo.Session.New()](http://godoc.org/labix.org/v2/mgo#Session.New) for more information.
-
-
-### app.init()
-
-Add the following inside the app.init() function in `app/init.go`.
-
+### Initialization
+- In app.init() in `app/init.go` add:
+``` go
     revel.OnAppStart(revmgo.AppInit)
-    
-### controllers.init()
+```
 
-Similarly for your controllers init() function you must add the `revmgo.ControllerInit()` method. A minimum `app/controllers/init.go` file is represented below.
+- In controllers.init() in `app/controllers/init.go` add
+``` go
+    revmgo.ControllerInit()
+```
+So a minimal controller's init() would be:
 
+``` go
     package controllers
 
-    import "github.com/jgraham909/revmgo"
+    import "github.com/janekolszak/revmgo"
 
     func init() {
         revmgo.ControllerInit()
     }
+```
 
-
-### Embedding the controller
-
-In any controller you want to have mongo connectivity you must include the
-MongoController.
-
-Add the following import line in source files that will embed MongoController.
-
-     "github.com/jgraham909/revmgo"
-
+### Usage
 Embed the MongoController on your custom controller;
+``` go
+    package controllers
 
-    type Application struct {
-  		*revel.Controller
-      revmgo.MongoController
-  		// Other fields
+    import (
+        "github.com/janekolszak/revmgo"
+        "github.com/revel/revel"
+    )
+    
+    type App struct {
+        *revel.Controller
+        revmgo.MongoController
+  		// ...
   	}
-
-
-Your controller will now have a MongoSession variable of type *mgo.Session. Use this
-to query your mongo datastore.
+```
+The controller will now have a MongoSession variable of type `*mgo.Session`. Use this to query your mongo datastore.
 
 ### See Also
 
 *  http://labix.org/v2/mgo for documentation on the mgo driver
 *  https://github.com/jgraham909/bloggo for a reference implementation (Still a work in progress)
 
-[![Build Status](https://travis-ci.org/jgraham909/revmgo.png)](https://travis-ci.org/jgraham909/revmgo)
+
