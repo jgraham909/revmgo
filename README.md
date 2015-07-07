@@ -2,6 +2,8 @@ revmgo
 ======
 mgo module for revel framework
 
+This is a **mantained** fork of https://github.com/jgraham909/revmgo. 
+
 ### Installation
 ``` bash
     go get github.com/janekolszak/revmgo
