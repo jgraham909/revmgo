@@ -10,7 +10,7 @@ This is a **mantained** fork of https://github.com/jgraham909/revmgo.
 ```
 ### Test
 ``` bash
-    go get github.com/janekolszak/revmgo/testapp
+    revel test github.com/janekolszak/revmgo/testapp
 ```
 ### Configuration
 In app.conf:
