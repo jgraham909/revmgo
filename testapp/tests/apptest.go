@@ -1,8 +1,8 @@
 package tests
 
 import (
-    "github.com/jgraham909/revmgo"
-    "github.com/jgraham909/revmgo/testapp/app/models"
+    "github.com/janekolszak/revmgo"
+    "github.com/janekolszak/revmgo/testapp/app/models"
     "github.com/revel/revel/testing"
 )
 
