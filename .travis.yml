@@ -6,13 +6,11 @@ install:
   - export PATH=$PATH:$HOME/gopath/bin
   - go get -v github.com/revel/revel
   - go get -v github.com/revel/cmd/revel
-  - go get -v github.com/revel/revel/harness
   - go get -v labix.org/v2/mgo
   - go get -v labix.org/v2/mgo/bson
 
 script:
   - go test github.com/revel/revel
-  - go test github.com/revel/revel/harness
 
   # Build & run the sample app
   - revel test github.com/janekolszak/revmgo/testapp
