@@ -1,4 +1,4 @@
-revmgo
+revmgo [![Build Status](https://travis-ci.org/janekolszak/revmgo.svg?branch=master)](https://travis-ci.org/janekolszak/revmgo)
 ======
 mgo module for revel framework
 
