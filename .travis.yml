@@ -14,5 +14,5 @@ script:
   - go test github.com/revel/revel
   - go test github.com/revel/revel/harness
 
-  # Build & run the sample apps
-  - revel test github.com/jgraham909/revmgo/testapp
+  # Build & run the sample app
+  - revel test github.com/janekolszak/revmgo/testapp
