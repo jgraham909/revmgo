@@ -2,7 +2,7 @@ revmgo [![Build Status](https://travis-ci.org/janekolszak/revmgo.svg?branch=mast
 ======
 mgo module for revel framework
 
-This is a **mantained** fork of https://github.com/jgraham909/revmgo. 
+This is a **mantained** fork of https://github.com/jgraham909/revmgo.
 
 ### Installation
 ``` bash
@@ -10,7 +10,7 @@ This is a **mantained** fork of https://github.com/jgraham909/revmgo.
 ```
 ### Test
 ``` bash
-    revel test github.com/janekolszak/revmgo/testapp
+    revel test github.com/janekolszak/revmgo/testapp dev
 ```
 ### Configuration
 In app.conf:
@@ -48,7 +48,7 @@ Embed the MongoController on your custom controller;
         "github.com/janekolszak/revmgo"
         "github.com/revel/revel"
     )
-    
+
     type App struct {
         *revel.Controller
         revmgo.MongoController
