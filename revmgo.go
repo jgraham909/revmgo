@@ -37,6 +37,9 @@ func AppInit() {
     // Read configuration.
     Dial = revel.Config.StringDefault("revmgo.dial", "localhost")
     Method = revel.Config.StringDefault("revmgo.method", "clone")
+
+    revel.INFO.Printf("Dialing Mongo DB: %s with method %s", Dial, Method)
+
     if err = MethodError(Method); err != nil {
         revel.ERROR.Panic(err)
     }
