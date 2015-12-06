@@ -57,6 +57,25 @@ Embed the MongoController on your custom controller;
 ```
 The controller will now have a MongoSession variable of type `*mgo.Session`. Use this to query your mongo datastore.
 
+Use revmgo in revel.jobs
+``` go
+    package controllers
+
+    import (
+        "github.com/janekolszak/revmgo"
+        "github.com/revel/revel"
+    )
+
+    type Job struct {}
+    func(j Job){
+        s := revmgo.JobInit()
+        if s == nil {
+            // error
+        }
+        defer s.Close()
+        // ...
+    }
+```
 ### See Also
 
 *  http://labix.org/v2/mgo for documentation on the mgo driver
