@@ -68,8 +68,8 @@ Use revmgo in revel.jobs
 
     type Job struct {}
     func(j Job){
-        s := revmgo.JobInit()
-        if s == nil {
+        s, err := revmgo.GetSession()
+        if err != nil {
             // error
         }
         defer s.Close()

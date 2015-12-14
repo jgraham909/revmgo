@@ -103,18 +103,18 @@ func (c *MongoController) End() revel.Result {
 }
 
 // No InterceptMethod for Jobs so get the Session and defer Session.Close()
-func JobInit() *mgo.Session {
+func GetSession() (*mgo.Session, error) {
     if Session == nil {
         var err error
         Session, err = mgo.Dial(Dial)
         if err != nil {
             err = fmt.Errorf("Could not connect to Mongo DB. Error: %s", err)
-            return nil
+            return nil, err
         } else {
             setDuplMethod()
         }
     }
-    return mgoSessionDupl()
+    return mgoSessionDupl(), nil
 }
 
 func MethodError(m string) error {
